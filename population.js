@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const axios = require('axios');
+const axios = require('axios'); //Axios — это JavaScript-библиотека для выполнения либо HTTP-запросов в Node.js, либо XMLHttpRequests в браузере
 
 //task 01.1
 axios.get('http://api.population.io:80/1.0/population/2017/Belarus/')
@@ -27,6 +27,7 @@ for (let i=0; i<3; i++)
 	allPromises.push(axios.get(`http://api.population.io:80/1.0/population/2017/${countries[i]}/`));
 }
 
+//Этот промис выполняется тогда, когда выполнены всего его элементы
 Promise.all(allPromises)
 	.then((res) => {
         console.log("\t\t\t*task 01.2\t\t\t");
@@ -52,6 +53,7 @@ let anyPromises = [];
 anyPromises.push(axios.get('http://api.population.io:80/1.0/population/2014/Belarus/'));
 anyPromises.push(axios.get('http://api.population.io:80/1.0/population/2015/Belarus/'));
 
+//обрабатывает "первый попавшийся"  промис
 Promise.any(anyPromises).then((result) => {
     console.log("\t\t\ttask 01.3\t\t\t");
 
@@ -69,6 +71,7 @@ Promise.any(anyPromises).then((result) => {
 
 
 //task 01.4
+//Возвращает обещание, которое выполняется, когда выполняются все свойства объекта или значения «карты».
 Promise.props({
 	greece: axios.get(`http://api.population.io:80/1.0/mortality-distribution/Greece/male/0y2m/today/`),
 	turkey: axios.get(`http://api.population.io:80/1.0/mortality-distribution/Turkey/male/0y2m/today/`)
@@ -111,13 +114,14 @@ axios.get('http://api.population.io:80/1.0/countries')
 	.then((result)=>{
         console.log("\t\t\ttask 01.5\t\t\t");
         let count = 0;
-     //   console.log(result.data.countries);
+        console.log(result.data.countries);
      result.data.countries.forEach(c=>{
         if(count<5){
             cntrs.push(c);
             count+=1;
         }
      });
+//возвратное обещание не выполняется, пока все сопоставленные обещания не будут выполнены.
 Promise.map(cntrs, (i) => {
 	return axios.get(`http://api.population.io:80/1.0/population/2007/${i}/`)
 }).then((response) => {
